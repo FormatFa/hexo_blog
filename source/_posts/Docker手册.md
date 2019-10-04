@@ -48,3 +48,6 @@ docker search 关键字
 
 - --name 镜像名字
 - 
+
+#### 导出容器文件系统到本地
+` docker export master > master.tar`

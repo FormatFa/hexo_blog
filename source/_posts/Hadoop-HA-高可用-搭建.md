@@ -7,13 +7,15 @@ tags:
 - 大数据
 categories:
 - 大数据
-- hadoop
+- Docker搭建Hadoop环境集群
 typora-root-url: Hadoop-HA-高可用-搭建
 ---
 
 # Hadoop HA(高可用)搭建
 
 ## 环境准备和集群规划
+
+> Hadoop 是安装其他组件的基础,必须先配置好Hadoop环境
 
 ### 1. 环境
 
@@ -82,7 +84,7 @@ hadoop等:apache 镜像站:https://mirrors.tuna.tsinghua.edu.cn/apache/
 
 - 添加公钥到slave1和slave2节点
 
-  master,slave1和slave2节点默认没有~/.ssh文件夹,在两个节点执行`ssh localhost`就会生成~/.ssh文件夹(或者手动建立)
+master,slave1和slave2节点默认没有`~/.ssh`文件夹,在两个节点执行`ssh localhost`就会生成`~/.ssh`文件夹(或者手动建立)
 
 - 将master的公钥(id_rsa.pub)添加到 三台主机的~/.ssh/authorized_keys 文件
 
@@ -493,11 +495,7 @@ server.3=slave2:2888:3888
 
 ### 配置环境变量
 
-修改的是~/.bash_profile ,每次登录时执行一次，但是 ~/.bashrc每次登录或者打开一个shell时都会执行一次
-
-这里修`.bash_profile`文件
-
-**后续，发现启动docker容器登录shell不会执行.bash_profile文件,PATH变量没有配置好的，但会执行~/.bashrc,改成修改~/.bashrc**
+修改`/root/.bashrc`文件
 
 ```shell
 后面添加下面的变量
@@ -530,8 +528,8 @@ mkdir -p /opt/data/zookeeper_data
 - 复制环境变量
 
   ```
-  scp /root/.bash_profile root@slave1:/root/
-  scp /root/.bash_profile root@slave2:/root/
+  scp /root/.bashrc root@slave1:/root/
+  scp /root/.bashrc root@slave2:/root/
   
   ```
 
@@ -549,7 +547,7 @@ mkdir -p /opt/data/zookeeper_data
 测试环境变量
 
 ```
-[root@d7998eb32bfb ~]# source /root/.bash_profile
+[root@d7998eb32bfb ~]# source /root/.bashrc
 [root@d7998eb32bfb ~]# java -version
 java version "1.8.0_191"
 Java(TM) SE Runtime Environment (build 1.8.0_191-b12)
