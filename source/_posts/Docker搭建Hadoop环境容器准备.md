@@ -46,15 +46,24 @@ Docker 安装Hadoop HA 之前的准备
 要求
 
 - 使用centos:7镜像创建
+
 - 创建时指定网络 为 hadoopCluster
+
 - 指定运行的命令为bash (不指定一个命令的话,centos 启动后没有前台程序会自动退出),且要指定-it,不然一样会退出
+
+  **10-9补充,命令可以改成`/usr/sbin/init`**
+
 - 指定容器的名字为master,slave1,slave2
+
 - **(后面新增)使用-h指定容器的hostname**
 
 ```
-docker create -it --network -h master hadoopCluster --name master centos:7 bash
-docker create -it --network -h slave1 hadoopCluster --name slave1 centos:7 bash
-docker create -it --network -h slave2 hadoopCluster --name slave2 centos:7 bash
+docker create -it --network  hadoopCluster -h master --name master centos:7 bash
+docker create -it --network  hadoopCluster -h slave1 --name slave1 centos:7 bash
+docker create -it --network -h  hadoopCluster slave2 --name slave2 centos:7 bash
+
+docker create -it --network -h slave2 hadoopCluster --name slave3 centos:7 bash
+
 ```
 
 ![1569980703538](1569980703538.png)
@@ -130,11 +139,89 @@ sshd: no hostkeys available -- exiting.
 
 
 
+容器添加中文支持,默认没有中文字符集,vi编辑器等无法输入中文，输入会乱码
+
+![1570598582558](/1570598582558.png)
 
 
 
+1. 查看有的
 
-  
+   `locale -a`
+
+   ```
+   [root@slave3 ~]# locale -a
+   C
+   en_AG
+   en_AG.utf8
+   en_AU
+   en_AU.iso88591
+   en_AU.utf8
+   en_BW
+   en_BW.iso88591
+   en_BW.utf8
+   en_CA
+   en_CA.iso88591
+   en_CA.utf8
+   en_DK
+   en_DK.iso88591
+   en_DK.utf8
+   en_GB
+   en_GB.iso88591
+   en_GB.iso885915
+   en_GB.utf8
+   en_HK
+   en_HK.iso88591
+   en_HK.utf8
+   en_IE
+   en_IE@euro
+   en_IE.iso88591
+   en_IE.iso885915@euro
+   en_IE.utf8
+   en_IN
+   en_IN.utf8
+   en_NG
+   en_NG.utf8
+   en_NZ
+   en_NZ.iso88591
+   en_NZ.utf8
+   en_PH
+   en_PH.iso88591
+   en_PH.utf8
+   en_SG
+   en_SG.iso88591
+   en_SG.utf8
+   en_US
+   en_US.iso88591
+   en_US.iso885915
+   en_US.utf8
+   en_ZA
+   en_ZA.iso88591
+   en_ZA.utf8
+   en_ZM
+   en_ZM.utf8
+   en_ZW
+   en_ZW.iso88591
+   en_ZW.utf8
+   POSIX
+   ```
+
+   
+
+   
+
+2. 修改环境变量,设置LC_ALL 为 en_US.utf8
+
+这里修改~/.bashrc 文件
+
+```
+
+export LC_ALL=en_US.utf8
+```
+
+成功
+
+  ![1570599163681](/1570599163681.png)
 
 
 

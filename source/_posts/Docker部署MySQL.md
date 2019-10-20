@@ -28,7 +28,7 @@ docker search mysql,pull第一个官方的就行
 
 ```shell
 用法:
-docker run --name some-mysql   -e 	MYSQL_ROOT_PASSWORD=root 用户密码 -d mysql:tag 
+docker run --name some-mysql   -e 	MYSQL_ROOT_PASSWORD=用户密码 -d mysql:tag 
 --name 指定容器的名字
 -e 指定容器的环境变量
 -d 设置容器在后台运行并输出容器id
@@ -40,6 +40,18 @@ docker run --name  mysqlserver  -e MYSQL_ROOT_PASSWORD=123456  -d mysql
 ps 命令看到mysqlserver正在运行
 
 ```
+
+```shell
+创建mysql镜像
+docker create --name js   -e MYSQL_ROOT_PASSWORD=r mysql:5.7
+启动容器
+docker start js
+查看js容器ip地址
+创建一个临时客户端
+docker  run  -it  --rm mysql mysql -h172.19.0.5 -uroot -proot
+```
+
+
 
 <!-- more -->
 
