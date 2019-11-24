@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="IDEA本地运行Scala,Spark程序 前提:  maven源设置为阿里云的源(下载依赖的速度很快) 安装了IDEA(社区版和专业版都可以) 安装了JDK 1.8 (下面的安装都是在Scala 2.11.x版本，对应的JDK版本是1.8)  1. 下载安装Scala下载二进制zip安装包解压，设置环境变量，类似安装JDK 命令行输入scala测试,  2. IDEA安装Scala 插件 下载慢">
+<meta name="keywords" content="大数据,Spark,IDEA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IDEA搭建Scala_Spark开发环境">
+<meta property="og:url" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/index.html">
+<meta property="og:site_name" content="格格的博客">
+<meta property="og:description" content="IDEA本地运行Scala,Spark程序 前提:  maven源设置为阿里云的源(下载依赖的速度很快) 安装了IDEA(社区版和专业版都可以) 安装了JDK 1.8 (下面的安装都是在Scala 2.11.x版本，对应的JDK版本是1.8)  1. 下载安装Scala下载二进制zip安装包解压，设置环境变量，类似安装JDK 命令行输入scala测试,  2. IDEA安装Scala 插件 下载慢">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/scala_test.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/scala_plugin.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/scala_dir.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/add_scala_sdk.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/idea_scala_test.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/idea_spark_test.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/output_layout.png">
+<meta property="og:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/output_jar.png">
+<meta property="og:updated_time" content="2019-11-17T08:58:10.935Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IDEA搭建Scala_Spark开发环境">
+<meta name="twitter:description" content="IDEA本地运行Scala,Spark程序 前提:  maven源设置为阿里云的源(下载依赖的速度很快) 安装了IDEA(社区版和专业版都可以) 安装了JDK 1.8 (下面的安装都是在Scala 2.11.x版本，对应的JDK版本是1.8)  1. 下载安装Scala下载二进制zip安装包解压，设置环境变量，类似安装JDK 命令行输入scala测试,  2. IDEA安装Scala 插件 下载慢">
+<meta name="twitter:image" content="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/scala_test.png">
+  <link rel="canonical" href="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>IDEA搭建Scala_Spark开发环境 | 格格的博客</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a4e71e3aa5940363e76f51ed960c0ed4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">格格的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">14</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/FormatFa" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.formatfa.top/2019/11/17/IDEA搭建Scala-Spark开发环境/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FormatFa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格格的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">IDEA搭建Scala_Spark开发环境
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-17 16:15:07 / 修改时间：16:58:10" itemprop="dateCreated datePublished" datetime="2019-11-17T16:15:07+08:00">2019-11-17</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/大数据/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/大数据/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>IDEA本地运行Scala,Spark程序</p>
+<p>前提:</p>
+<ol>
+<li>maven源设置为阿里云的源(下载依赖的速度很快)</li>
+<li>安装了IDEA(社区版和专业版都可以)</li>
+<li>安装了JDK 1.8 (下面的安装都是在Scala 2.11.x版本，对应的JDK版本是1.8)</li>
+</ol>
+<h3 id="1-下载安装Scala"><a href="#1-下载安装Scala" class="headerlink" title="1. 下载安装Scala"></a>1. 下载安装Scala</h3><p>下载二进制zip安装包解压，设置环境变量，类似安装JDK</p>
+<p>命令行输入scala测试,</p>
+<p><img src="scala_test.png" alt="image-20191117164012185"></p>
+<h3 id="2-IDEA安装Scala-插件"><a href="#2-IDEA安装Scala-插件" class="headerlink" title="2. IDEA安装Scala 插件"></a>2. IDEA安装Scala 插件</h3><p><img src="scala_plugin.png" alt="image-20191117162228882"></p>
+<p>下载慢的，可以在其他下载快的地方下载拷过来，使用磁盘安装的方式安装</p>
+<a id="more"></a>
+
+<h3 id="3-IDEA创建Maven工程"><a href="#3-IDEA创建Maven工程" class="headerlink" title="3. IDEA创建Maven工程"></a>3. IDEA创建Maven工程</h3><p>idea里创建一个maven工程后</p>
+<ol>
+<li><p>在src/main下建立scala文件夹</p>
+</li>
+<li><p>在scala文件夹右键,点击Mark Directory as Source Root ,将scala 设置为源码目录,设置为源码目录后，文件夹变成蓝色</p>
+<p><img src="scala_dir.png" alt="image-20191117162610150"></p>
+</li>
+</ol>
+<h3 id="4-配置Scala框架支持"><a href="#4-配置Scala框架支持" class="headerlink" title="4. 配置Scala框架支持"></a>4. 配置Scala框架支持</h3><p>现在在scala 文件夹，右键新建文件，发现没有新建scala 的选项，需要添加scala框架支持</p>
+<p>打开Project Structure </p>
+<p><img src="add_scala_sdk.png" alt="image-20191117162727290"></p>
+<p>有两种方法</p>
+<ul>
+<li>一种是每个工程都点Libraires，添加Scala SDK</li>
+</ul>
+<p>在Libraries 选项卡里点击添加，选择Scala SDK ,选择browser浏览本地，选择上面解压的scala路径</p>
+<ul>
+<li><p>另一个是在Global Libraries里添加一个Scala SDK </p>
+<p>新建完工程后，在Global Libraries里选择刚刚添加的SDK,右键添加到Module里也行</p>
+</li>
+</ul>
+<p>添加完后,在源码目录右键就可以看到新建Scala类的选项了,新建个Scala类测试</p>
+<p><img src="idea_scala_test.png" alt="image-20191117163449058"></p>
+<h3 id="5-添加Spark-依赖"><a href="#5-添加Spark-依赖" class="headerlink" title="5. 添加Spark 依赖"></a>5. 添加Spark 依赖</h3><p>Spark的依赖包括Spark-Core,Spark-SQL,而且两个的版本要对应</p>
+<p>下面的2.3.3为Spark的版本, 2.11为scala 2.11.x版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--Spark RDD这些的依赖--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>S</span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spark-core_2.11<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">&lt;!--  Spark SQL的依赖--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spark-sql_2.11<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.scala-lang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>scala-library<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.11.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-测试"><a href="#6-测试" class="headerlink" title="6. 测试"></a>6. 测试</h3><p><img src="idea_spark_test.png" alt="image-20191117164432217"></p>
+<h3 id="7-打包Jar包"><a href="#7-打包Jar包" class="headerlink" title="7. 打包Jar包"></a>7. 打包Jar包</h3><p>在Project Structure 里选择 Artifacts,添加一个Artifacts</p>
+<p><img src="output_layout.png" alt="image-20191117164509553"></p>
+<p>左边的为导出的jar需要的东西，右边为可选的东西,这里将右边的compile output(即编译的输出)put into 左边，就可以了</p>
+<p>回到主界面,依次选择Build -&gt; Build Artifacts ,jar包就生成在out/目录下</p>
+<p><img src="output_jar.png" alt="image-20191117164707761"></p>
+<h3 id="8-常见问题"><a href="#8-常见问题" class="headerlink" title="8. 常见问题"></a>8. 常见问题</h3>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/大数据/" rel="tag"># 大数据</a>
+            
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+            
+              <a href="/tags/IDEA/" rel="tag"># IDEA</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/02/MySQL创建用户/" rel="next" title="MySQL创建用户">
+                  <i class="fa fa-chevron-left"></i> MySQL创建用户
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80NjMyMy8yMjgzNA=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc" data-target="post-toc-wrap">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-下载安装Scala"><span class="nav-number">1.</span> <span class="nav-text">1. 下载安装Scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-IDEA安装Scala-插件"><span class="nav-number">2.</span> <span class="nav-text">2. IDEA安装Scala 插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-IDEA创建Maven工程"><span class="nav-number">3.</span> <span class="nav-text">3. IDEA创建Maven工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-配置Scala框架支持"><span class="nav-number">4.</span> <span class="nav-text">4. 配置Scala框架支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-添加Spark-依赖"><span class="nav-number">5.</span> <span class="nav-text">5. 添加Spark 依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-测试"><span class="nav-number">6.</span> <span class="nav-text">6. 测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-打包Jar包"><span class="nav-number">7.</span> <span class="nav-text">7. 打包Jar包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-常见问题"><span class="nav-number">8.</span> <span class="nav-text">8. 常见问题</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="FormatFa">
+  <p class="site-author-name" itemprop="name">FormatFa</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/FormatFa" title="GitHub &rarr; https://github.com/FormatFa" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FormatFa</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

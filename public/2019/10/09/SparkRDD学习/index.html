@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="RDD 操作 官方文档: http://spark.apache.org/docs/latest/rdd-programming-guide.html  RDD 操作分为 转换(Transformation)和行动(Action)  Transformations    sformation Meaning    map(func) Return a new distributed dataset">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SparkRDD学习">
+<meta property="og:url" content="http://blog.formatfa.top/2019/10/09/SparkRDD学习/index.html">
+<meta property="og:site_name" content="格格的博客">
+<meta property="og:description" content="RDD 操作 官方文档: http://spark.apache.org/docs/latest/rdd-programming-guide.html  RDD 操作分为 转换(Transformation)和行动(Action)  Transformations    sformation Meaning    map(func) Return a new distributed dataset">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-20T03:56:02.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SparkRDD学习">
+<meta name="twitter:description" content="RDD 操作 官方文档: http://spark.apache.org/docs/latest/rdd-programming-guide.html  RDD 操作分为 转换(Transformation)和行动(Action)  Transformations    sformation Meaning    map(func) Return a new distributed dataset">
+  <link rel="canonical" href="http://blog.formatfa.top/2019/10/09/SparkRDD学习/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>SparkRDD学习 | 格格的博客</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a4e71e3aa5940363e76f51ed960c0ed4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">格格的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">14</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/FormatFa" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.formatfa.top/2019/10/09/SparkRDD学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FormatFa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格格的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">SparkRDD学习
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-09 17:30:01" itemprop="dateCreated datePublished" datetime="2019-10-09T17:30:01+08:00">2019-10-09</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-20 11:56:02" itemprop="dateModified" datetime="2019-10-20T11:56:02+08:00">2019-10-20</time>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>RDD 操作</p>
+<p>官方文档:</p>
+<p><a href="http://spark.apache.org/docs/latest/rdd-programming-guide.html" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/rdd-programming-guide.html</a></p>
+<blockquote>
+<p>RDD 操作分为 转换(Transformation)和行动(Action)</p>
+</blockquote>
+<p>Transformations</p>
+<table>
+<thead>
+<tr>
+<th>sformation</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>map</strong>(<em>func</em>)</td>
+<td>Return a new distributed dataset formed by passing each element of the source through a function <em>func</em>. 将每个元素用<code>func</code>函数处理后返回一个新的RDD</td>
+</tr>
+<tr>
+<td><strong>filter</strong>(<em>func</em>)</td>
+<td>Return a new dataset formed by selecting those elements of the source on which <em>func</em> returns true. 将每个元素用func处理,将返回结果是true的结果组合成一个新的RDD返回</td>
+</tr>
+<tr>
+<td><strong>flatMap</strong>(<em>func</em>)</td>
+<td>Similar to map, but each input item can be mapped to 0 or more output items (so <em>func</em> should return a Seq rather than a single item).  和map函数类似,每个元素可以输出1个以上的元素(所以func应该返回一个Seq,而不是一个值)</td>
+</tr>
+<tr>
+<td><strong>mapPartitions</strong>(<em>func</em>)</td>
+<td>Similar to map, but runs separately on each partition (block) of the RDD, so <em>func</em> must be of type     Iterator<t> =&gt; Iterator<u> when running on an RDD of type T.  和map函数类是,func接收的参数是RDD的每个分区,在类型是T的RDD上运行时,func的输入输出参数要是 Iterator<t>=&gt;Iterator<t></t></t></u></t></td>
+</tr>
+<tr>
+<td><strong>mapPartitionsWithIndex</strong>(<em>func</em>)</td>
+<td>Similar to mapPartitions, but also provides <em>func</em> with an integer value representing the index of   the partition, so <em>func</em> must be of type (Int, Iterator<t>) =&gt; Iterator<u> when running on an RDD of type T.    和mapPartitions类似,func函数的参数多一个整数表示分区的索引,参数类型是 (Int,Iterator)=&gt;(Iterator)</u></t></td>
+</tr>
+<tr>
+<td><strong>sample</strong>(<em>withReplacement</em>, <em>fraction</em>, <em>seed</em>)</td>
+<td>Sample a fraction <em>fraction</em> of the data, with or without replacement, using a given random number generator seed.</td>
+</tr>
+<tr>
+<td><strong>union</strong>(<em>otherDataset</em>)</td>
+<td>Return a new dataset that contains the union of the elements in the source dataset and the argument. 原RDD和参数的RDD联合</td>
+</tr>
+<tr>
+<td><strong>intersection</strong>(<em>otherDataset</em>)</td>
+<td>Return a new RDD that contains the intersection of elements in the source dataset and the argument.</td>
+</tr>
+<tr>
+<td><strong>distinct</strong>([<em>numPartitions</em>]))</td>
+<td>Return a new dataset that contains the distinct elements of the source dataset. 返回一个没有重复元素的RDD</td>
+</tr>
+<tr>
+<td><strong>groupByKey</strong>([<em>numPartitions</em>])</td>
+<td>When called on a dataset of (K, V) pairs, returns a dataset of (K, Iterable<v>) pairs.       <strong>Note:</strong> If you are grouping in order to perform an aggregation (such as a sum or       average) over each key, using <code>reduceByKey</code> or <code>aggregateByKey</code> will yield much better       performance.           <strong>Note:</strong> By default, the level of parallelism in the output depends on the number of partitions of the parent RDD.       You can pass an optional <code>numPartitions</code> argument to set a different number of tasks.   在(K,V)类型的键值对上调用,返回一个(K,Iterable<v>)的键值对 Note:如果为了在每个key上聚合(如求和,平均),使用<code>reduceByKey</code>或<code>aggregateBykey</code>,性能会更好</v></v></td>
+</tr>
+<tr>
+<td><strong>reduceByKey</strong>(<em>func</em>, [<em>numPartitions</em>])</td>
+<td>When called on a dataset of (K, V) pairs, returns a dataset of  (K, V) pairs where the values for each key are aggregated using the  given reduce function <em>func</em>, which must be of type (V,V) =&gt; V. Like in <code>groupByKey</code>, the number of reduce tasks is configurable through an optional second argument. 在(K,V)的键值对RDD上使用 ,返回一个RDD ,key的每个value用给定的reduce函数func聚合,聚合函数func的类型要是(V,V)=&gt;V,向<code>groupByKey</code>一样,reduce任务通过可选的第二参数设置</td>
+</tr>
+<tr>
+<td><strong>aggregateByKey</strong>(<em>zeroValue</em>)(<em>seqOp</em>, <em>combOp</em>, [<em>numPartitions</em>])</td>
+<td>When called on a dataset of (K, V) pairs, returns a dataset of  (K, U) pairs where the values for each key are aggregated using the  given combine functions and a neutral “zero” value. Allows an aggregated  value type that is different than the input value type, while avoiding  unnecessary allocations. Like in <code>groupByKey</code>, the number of reduce tasks is configurable through an optional second argument. 在(K,V)键值对的RDD上使用,返回(K,U)键值对,每个键的值使用指定的combine函数和一个值聚合.聚合的值的类型可以和输入的值类型不一样,和<code>groupByKey</code>函数一样,reduce task的数量通过第二个可选参数指定</td>
+</tr>
+<tr>
+<td><strong>sortByKey</strong>([<em>ascending</em>], [<em>numPartitions</em>])</td>
+<td>When called on a dataset of (K, V) pairs where K implements  Ordered, returns a dataset of (K, V) pairs sorted by keys in ascending  or descending order, as specified in the boolean <code>ascending</code> argument.在实现了Ordered的 (K,V)RDD上使用</td>
+</tr>
+<tr>
+<td><strong>join</strong>(<em>otherDataset</em>, [<em>numPartitions</em>])</td>
+<td>When called on datasets of type (K, V) and (K, W), returns a  dataset of (K, (V, W)) pairs with all pairs of elements for each key.     Outer joins are supported through <code>leftOuterJoin</code>, <code>rightOuterJoin</code>, and <code>fullOuterJoin</code>.   在(K,V)类型的RDD上使用,将键一样的放在一起 (K,V)+(K,W)=(K,(V,W)</td>
+</tr>
+<tr>
+<td><strong>cogroup</strong>(<em>otherDataset</em>, [<em>numPartitions</em>])</td>
+<td>When called on datasets of type (K, V) and (K, W), returns a  dataset of (K, (Iterable<v>, Iterable<w>)) tuples. This  operation is also called <code>groupWith</code>. 在 (K,V)和(K,W)类型的RDD上调用,返回一个(K,(Iterable<v>,Iterable<w>))元祖的</w></v></w></v></td>
+</tr>
+<tr>
+<td><strong>cartesian</strong>(<em>otherDataset</em>)</td>
+<td>When called on datasets of types T and U, returns a dataset of (T, U) pairs (all pairs of elements).</td>
+</tr>
+<tr>
+<td><strong>pipe</strong>(<em>command</em>, <em>[envVars]</em>)</td>
+<td>Pipe each partition of the RDD through a shell command, e.g. a Perl or bash script. RDD elements are written to the     process’s stdin and lines output to its stdout are returned as an RDD of strings.</td>
+</tr>
+<tr>
+<td><strong>coalesce</strong>(<em>numPartitions</em>)</td>
+<td>Decrease the number of partitions in the RDD to numPartitions. Useful for running operations more efficiently     after filtering down a large dataset.</td>
+</tr>
+<tr>
+<td><strong>repartition</strong>(<em>numPartitions</em>)</td>
+<td>Reshuffle the data in the RDD randomly to create either more or fewer partitions and balance it across them.     This always shuffles all data over the network.</td>
+</tr>
+<tr>
+<td><strong>repartitionAndSortWithinPartitions</strong>(<em>partitioner</em>)</td>
+<td>Repartition the RDD according to the given partitioner and, within each resulting partition,   sort records by their keys. This is more efficient than calling <code>repartition</code> and then sorting within   each partition because it can push the sorting down into the shuffle machinery.</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<p>Actions</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>reduce</strong>(<em>func</em>)</td>
+<td>Aggregate the elements of the dataset using a function <em>func</em>  (which takes two arguments and returns one). The function should be  commutative and associative so that it can be computed correctly in  parallel.</td>
+</tr>
+<tr>
+<td><strong>collect</strong>()</td>
+<td>Return all the elements of the dataset as an array at the driver  program. This is usually useful after a filter or other operation that  returns a sufficiently small subset of the data.</td>
+</tr>
+<tr>
+<td><strong>count</strong>()</td>
+<td>Return the number of elements in the dataset.</td>
+</tr>
+<tr>
+<td><strong>first</strong>()</td>
+<td>Return the first element of the dataset (similar to take(1)).</td>
+</tr>
+<tr>
+<td><strong>take</strong>(<em>n</em>)</td>
+<td>Return an array with the first <em>n</em> elements of the dataset.</td>
+</tr>
+<tr>
+<td><strong>takeSample</strong>(<em>withReplacement</em>, <em>num</em>, [<em>seed</em>])</td>
+<td>Return an array with a random sample of <em>num</em> elements of the dataset, with or without replacement, optionally pre-specifying a random number generator seed.</td>
+</tr>
+<tr>
+<td><strong>takeOrdered</strong>(<em>n</em>, <em>[ordering]</em>)</td>
+<td>Return the first <em>n</em> elements of the RDD using either their natural order or a custom comparator.</td>
+</tr>
+<tr>
+<td><strong>saveAsTextFile</strong>(<em>path</em>)</td>
+<td>Write the elements of the dataset as a text file (or set of text  files) in a given directory in the local filesystem, HDFS or any other  Hadoop-supported file system. Spark will call toString on each element  to convert it to a line of text in the file.</td>
+</tr>
+<tr>
+<td><strong>saveAsSequenceFile</strong>(<em>path</em>)   (Java and Scala)</td>
+<td>Write the elements of the dataset as a Hadoop SequenceFile in a  given path in the local filesystem, HDFS or any other Hadoop-supported  file system. This is available on RDDs of key-value pairs that implement  Hadoop’s Writable interface. In Scala, it is also    available on types that are implicitly convertible to Writable (Spark  includes conversions for basic types like Int, Double, String, etc).</td>
+</tr>
+<tr>
+<td><strong>saveAsObjectFile</strong>(<em>path</em>)   (Java and Scala)</td>
+<td>Write the elements of the dataset in a simple format using Java serialization, which can then be loaded using     <code>SparkContext.objectFile()</code>.</td>
+</tr>
+<tr>
+<td><strong>countByKey</strong>()</td>
+<td>Only available on RDDs of type (K, V). Returns a hashmap of (K, Int) pairs with the count of each key.</td>
+</tr>
+<tr>
+<td><strong>foreach</strong>(<em>func</em>)</td>
+<td>Run a function <em>func</em> on each element of the dataset. This is usually done for side effects such as updating an <a href="http://spark.apache.org/docs/latest/rdd-programming-guide.html#accumulators" target="_blank" rel="noopener">Accumulator</a> or interacting with external storage systems.    <strong>Note</strong>: modifying variables other than Accumulators outside of the <code>foreach()</code> may result in undefined behavior. See <a href="http://spark.apache.org/docs/latest/rdd-programming-guide.html#understanding-closures-a-nameclosureslinka" target="_blank" rel="noopener">Understanding closures </a> for more details.</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/04/Flume搭建/" rel="next" title="Flume搭建">
+                  <i class="fa fa-chevron-left"></i> Flume搭建
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/11/Hive学习/" rel="prev" title="Hive学习">
+                  Hive学习 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80NjMyMy8yMjgzNA=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc" data-target="post-toc-wrap">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="FormatFa">
+  <p class="site-author-name" itemprop="name">FormatFa</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/FormatFa" title="GitHub &rarr; https://github.com/FormatFa" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FormatFa</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

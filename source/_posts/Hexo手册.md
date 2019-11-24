@@ -24,6 +24,12 @@ post
 #### 草稿转为文章
 `hexo publish [layout] title`
 
+### 编译输出html
+
+`hexo generate`
+
+
+
 ### 文章在首页显示加载更多
 
 在想要的地方加入

@@ -218,6 +218,10 @@ hive>
 
 ### 3. PySpark使用python3
 
+python3源码下载
+
+http://npm.taobao.org/mirrors/python/3.7.0/
+
 默认安装的Python 为 2.7,现在修改为3.7版本
 
 - 使用源码编译的方式安装 Python3
@@ -233,12 +237,11 @@ hive>
    yum install libffi-devel -y 
    yum install  readline-devel(不装这个方向键用不了)
    yum install -y openssl-devel
-   libffi-devel
    ```
-
-   解压源码包
-
-   ```
+   
+解压源码包
+   
+```
    tar -xvf Python-3.7.3.tar.xz 
    cd 进入解压出来的文件夹, 下面命令设置安装路径
    ./configure --prefix=/opt/python3
@@ -249,29 +252,29 @@ hive>
    编译安装
    make install
    ```
-
-   修改./bashrc 添加别名来在命令行里快速启动
-
-   ```
+   
+修改./bashrc 添加别名来在命令行里快速启动
+   
+```
    alias python3='/opt/python3/bin/python3'
    alias pip='/opt/python3/bin/pip3'
    ```
-
-   设置pyspark使用的python3为python3
-
-   ```
+   
+设置pyspark使用的python3为python3
+   
+```
    export PYSPARK_PYTHON=/opt/python3/bin/python3
    ```
-
    
 
-   - 复制编译好的python3到其他两个节点
-
-   - 复制环境变量.bashrc到其他两个节点
-
-   启动pyspark测试
-
-   ```
+   
+- 复制编译好的python3到其他两个节点
+   
+- 复制环境变量.bashrc到其他两个节点
+   
+启动pyspark测试
+   
+```
    成功是python3 
    Python 3.7.3 (default, Oct  4 2019, 04:22:20) 
    [GCC 4.8.5 20150623 (Red Hat 4.8.5-39)] on linux
@@ -291,10 +294,10 @@ hive>
    >>> 
    
    ```
-
    
 
    
+
 
 Spark 学习:
 

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-HandlingofNULLValues 数字类型 TINYINT (1-byte signed integer, from -128 to 127)  SMALLINT (2-byte signed integer,">
+<meta name="keywords" content="hive,hive笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hive数据类型">
+<meta property="og:url" content="http://blog.formatfa.top/2019/10/11/Hive数据类型/index.html">
+<meta property="og:site_name" content="格格的博客">
+<meta property="og:description" content="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-HandlingofNULLValues 数字类型 TINYINT (1-byte signed integer, from -128 to 127)  SMALLINT (2-byte signed integer,">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-20T03:55:06.744Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hive数据类型">
+<meta name="twitter:description" content="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-HandlingofNULLValues 数字类型 TINYINT (1-byte signed integer, from -128 to 127)  SMALLINT (2-byte signed integer,">
+  <link rel="canonical" href="http://blog.formatfa.top/2019/10/11/Hive数据类型/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Hive数据类型 | 格格的博客</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a4e71e3aa5940363e76f51ed960c0ed4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">格格的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">14</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/FormatFa" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.formatfa.top/2019/10/11/Hive数据类型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FormatFa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格格的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Hive数据类型
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-11 21:04:50" itemprop="dateCreated datePublished" datetime="2019-10-11T21:04:50+08:00">2019-10-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-20 11:55:06" itemprop="dateModified" datetime="2019-10-20T11:55:06+08:00">2019-10-20</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hive笔记/" itemprop="url" rel="index"><span itemprop="name">hive笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-HandlingofNULLValues" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-HandlingofNULLValues</a></p>
+<h3 id="数字类型"><a href="#数字类型" class="headerlink" title="数字类型"></a>数字类型</h3><ul>
+<li><p><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-tinyint" target="_blank" rel="noopener"><code>TINYINT</code></a> (1-byte signed integer, from <code>-128</code> to <code>127</code>)</p>
+</li>
+<li><p><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-smallint" target="_blank" rel="noopener"><code>SMALLINT</code></a> (2-byte signed integer, from <code>-32,768</code> to <code>32,767</code>)</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INT/INTEGER (4-byte signed integer, from -2,147,483,648 to 2,147,483,647)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-bigint" target="_blank" rel="noopener"><code>BIGINT</code></a> (8-byte signed integer, from <code>-9,223,372,036,854,775,808</code> to <code>9,223,372,036,854,775,807</code>)</p>
+</li>
+<li><p><code>FLOAT</code> (4-byte single precision floating point number)</p>
+</li>
+<li><p><code>DOUBLE</code> (8-byte double precision floating point number)</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DOUBLE PRECISION (alias for DOUBLE, only available starting with Hive 2.2.0)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>DECIMAL</code></p>
+<ul>
+<li>Introduced in Hive <a href="https://issues.apache.org/jira/browse/HIVE-2693" target="_blank" rel="noopener">0.11.0</a> with a precision of 38 digits</li>
+<li>Hive <a href="https://issues.apache.org/jira/browse/HIVE-3976" target="_blank" rel="noopener">0.13.0</a> introduced user-definable precision and scale</li>
+</ul>
+</li>
+<li><p><code>NUMERIC</code> (same as <code>DECIMAL</code>, starting with <a href="https://issues.apache.org/jira/browse/HIVE-16764" target="_blank" rel="noopener">Hive 3.0.0</a>)</p>
+</li>
+</ul>
+<p>Date/Time 类型</p>
+<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-timestamp" target="_blank" rel="noopener"><code>TIMESTAMP</code></a> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-2272" target="_blank" rel="noopener">0.8.0</a>)</li>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-date" target="_blank" rel="noopener"><code>DATE</code></a> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-4055" target="_blank" rel="noopener">0.12.0</a>)</li>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-Intervals" target="_blank" rel="noopener"><code>INTERVAL</code></a> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-9792" target="_blank" rel="noopener">1.2.0</a>)</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="String-Types"><a href="#String-Types" class="headerlink" title="String Types"></a>String Types</h3><ul>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-string" target="_blank" rel="noopener"><code>STRING</code></a></li>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-varchar" target="_blank" rel="noopener"><code>VARCHAR</code></a> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-4844" target="_blank" rel="noopener">0.12.0</a>)</li>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-char" target="_blank" rel="noopener"><code>CHAR</code></a> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-5191" target="_blank" rel="noopener">0.13.0</a>)</li>
+</ul>
+<h3 id="其他类型"><a href="#其他类型" class="headerlink" title="其他类型"></a>其他类型</h3><ul>
+<li><code>BOOLEAN</code></li>
+<li><code>BINARY</code> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-2380" target="_blank" rel="noopener">0.8.0</a>)</li>
+</ul>
+<h3 id="复杂类型"><a href="#复杂类型" class="headerlink" title="复杂类型"></a>复杂类型</h3><ul>
+<li>arrays: <code>ARRAY&lt;data_type&gt;</code> (Note: negative values and non-constant expressions are allowed as of <a href="https://issues.apache.org/jira/browse/HIVE-7325" target="_blank" rel="noopener">Hive 0.14</a>.)</li>
+<li>maps: <code>MAP&lt;primitive_type, data_type&gt;</code> (Note: negative values and non-constant expressions are allowed as of <a href="https://issues.apache.org/jira/browse/HIVE-7325" target="_blank" rel="noopener">Hive 0.14</a>.)</li>
+<li>structs: <code>STRUCT&lt;col_name : data_type [COMMENT col_comment], ...&gt;</code></li>
+<li>union: <code>UNIONTYPE&lt;data_type, data_type, ...&gt;</code> (Note: Only available starting with Hive <a href="https://issues.apache.org/jira/browse/HIVE-537" target="_blank" rel="noopener">0.7.0</a>.)</li>
+</ul>
+<h2 id="列类型"><a href="#列类型" class="headerlink" title="列类型"></a>列类型</h2><h3 id="整数"><a href="#整数" class="headerlink" title="整数"></a>整数</h3><h3 id="字符串string"><a href="#字符串string" class="headerlink" title="字符串string"></a>字符串string</h3><p>字符串可以用单引号或者双引号表示</p>
+<h3 id="Varchar"><a href="#Varchar" class="headerlink" title="Varchar"></a>Varchar</h3><p>varchar 创建时指定最大的长度(在1到65535之间),超过的会被丢弃</p>
+<p>varchar和string一样,字符串后面的空格会影响比较的结果</p>
+<h3 id="char"><a href="#char" class="headerlink" title="char"></a>char</h3><p>char 和 varchar类似,最大的长度是255,小于的会用空格补充</p>
+<p>后面的空格不会影响比较的结果</p>
+<h3 id="timestamps"><a href="#timestamps" class="headerlink" title="timestamps"></a>timestamps</h3><p>支持传统的UNIX时间戳,和可选的纳秒精度</p>
+<p>支持的转换</p>
+<ul>
+<li>整数数字类型:解析成秒的UNIX时间戳</li>
+<li>浮点数字类型:解析成带有小数的秒的UNIX时间戳</li>
+<li>字符串:遵循JDBC java.sql.Timestamp 格式”<code>YYYY-MM-DD HH:MM:SS.fffffffff</code>“ (9 decimal place precision)</li>
+</ul>
+<h3 id="Dates"><a href="#Dates" class="headerlink" title="Dates"></a>Dates</h3><p>Date类型表示特定的year/month/day,用YYYY-MM-DD的形式,比如’<code>2019-09-02</code>,支持的范围为0000-01-01到9999-12-31</p>
+<blockquote>
+<p>Date类型在Hive 0.12里引入</p>
+</blockquote>
+<h3 id="Casting-Dates"><a href="#Casting-Dates" class="headerlink" title="Casting Dates"></a>Casting Dates</h3><p>Date只能由Date,Timestamp,字符串 转换来或者转换成</p>
+<p>指定转换的格式:<a href="https://cwiki.apache.org/confluence/display/Hive/CAST...FORMAT+with+SQL%3A2016+datetime+formats" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/CAST...FORMAT+with+SQL%3A2016+datetime+formats</a></p>
+<table>
+<thead>
+<tr>
+<th>有效的转换</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cast(timestamp as date)</td>
+<td>The year/month/day of the timestamp is determined, based on the local timezone, and returned as a date value.</td>
+</tr>
+<tr>
+<td>cast(string as date)</td>
+<td>If  the string is in the form ‘YYYY-MM-DD’, then a date value corresponding  to that year/month/day is returned. If the string value does not match  this formate, then NULL is returned.</td>
+</tr>
+<tr>
+<td>cast(date as timestamp)</td>
+<td>A timestamp value is generated corresponding to midnight of the year/month/day of the date value, based on the local timezone.</td>
+</tr>
+<tr>
+<td>cast(date as string)</td>
+<td>The year/month/day represented by the Date is formatted as a string in the form ‘YYYY-MM-DD’.</td>
+</tr>
+<tr>
+<td>cast(date as date)</td>
+<td>Same date value</td>
+</tr>
+</tbody></table>
+<h3 id="Decimal-常量"><a href="#Decimal-常量" class="headerlink" title="Decimal 常量"></a>Decimal 常量</h3><p>大于BIGINT的整数常量必须用Decimal(39,0)处理,要用前缀BD</p>
+<p>例如</p>
+<p><code>select CAST(18446744073709001000BD AS DECIMAL(38,0)) from my_table limit 1;</code></p>
+<h3 id="空值处理"><a href="#空值处理" class="headerlink" title="空值处理"></a>空值处理</h3><p>缺失值用特殊的NULL值代表. 导入有NULL值的字段表使用的SerDe的文档(默认文本格式使用LazySimpleSerDe ,导入数据时将字符串\N解析为NULL)</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/hive/" rel="tag"># hive</a>
+            
+              <a href="/tags/hive笔记/" rel="tag"># hive笔记</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/11/Hive-Cli/" rel="next" title="Hive_Cli">
+                  <i class="fa fa-chevron-left"></i> Hive_Cli
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/11/Hive-DDL/" rel="prev" title="Hive_DDL">
+                  Hive_DDL <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80NjMyMy8yMjgzNA=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc" data-target="post-toc-wrap">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数字类型"><span class="nav-number">1.</span> <span class="nav-text">数字类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-Types"><span class="nav-number">2.</span> <span class="nav-text">String Types</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他类型"><span class="nav-number">3.</span> <span class="nav-text">其他类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂类型"><span class="nav-number">4.</span> <span class="nav-text">复杂类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#列类型"><span class="nav-number"></span> <span class="nav-text">列类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#整数"><span class="nav-number">1.</span> <span class="nav-text">整数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串string"><span class="nav-number">2.</span> <span class="nav-text">字符串string</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Varchar"><span class="nav-number">3.</span> <span class="nav-text">Varchar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#char"><span class="nav-number">4.</span> <span class="nav-text">char</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#timestamps"><span class="nav-number">5.</span> <span class="nav-text">timestamps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dates"><span class="nav-number">6.</span> <span class="nav-text">Dates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Casting-Dates"><span class="nav-number">7.</span> <span class="nav-text">Casting Dates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Decimal-常量"><span class="nav-number">8.</span> <span class="nav-text">Decimal 常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#空值处理"><span class="nav-number">9.</span> <span class="nav-text">空值处理</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="FormatFa">
+  <p class="site-author-name" itemprop="name">FormatFa</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/FormatFa" title="GitHub &rarr; https://github.com/FormatFa" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FormatFa</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
